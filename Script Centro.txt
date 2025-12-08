@@ -1,0 +1,192 @@
+conf t
+host Switch
+no ip cef
+ip rout
+no ipv6 cef
+spanning-tree mode pvst
+vlan 33
+vlan 34
+vlan 35
+vlan 36
+vlan 37
+int po1
+sw tr all vlan 33-37
+sw mo tr
+int gi1/0/20
+sw tr all vlan 33-37
+sw mo tr
+int gi1/0/21
+sw tr all vlan 33-37
+sw mo tr
+int gi1/0/22
+sw tr all vlan 33-37
+sw mo tr
+channel-group 1 mode act
+int gi1/0/23
+sw tr all vlan 33-37
+sw mo tr
+channel-group 1 mode act
+int gi1/0/24
+sw tr all vlan 33-37
+sw mo tr
+int vlan1
+no ip add
+sh
+int vlan33
+mac-address 0002.168a.ee01
+no ip add
+int vlan34
+mac-address 0002.168a.ee03
+no ip add
+int vlan35
+mac-address 0002.168a.ee04
+no ip add
+int vlan36
+mac-address 0002.168a.ee05
+no ip add
+int vlan37
+mac-address 0002.168a.ee06
+no ip add
+ip classless
+end
+wr
+
+
+
+conf t
+host Switch
+spanning-tree mode pvst
+spanning-tree extend system-id
+vlan 33
+vlan 34
+vlan 35
+vlan 36
+vlan 37
+int range fa0/1-4
+sw ac vlan 33
+sw mo ac
+int range fa0/5-8
+sw ac vlan 34
+sw mo ac
+int range fa0/9-12
+sw ac vlan 35
+sw mo ac
+int range fa0/13-16
+sw ac vlan 36
+sw mo ac
+int range fa0/17-20
+sw ac vlan 37
+sw mo ac
+int gi0/1
+sw tr all vlan 33-37
+sw mo tr
+int vlan1
+no ip add
+sh
+end
+wr
+
+
+
+
+conf t
+host Switch
+no ip cef
+no ipv6 cef
+spanning-tree mode pvst
+vlan 33
+vlan 34
+vlan 35
+vlan 36
+vlan 37
+int po1
+sw tr all vlan 33-37
+sw mo tr
+int range gi1/0/1-4
+sw ac vlan 33
+sw mo ac
+int range gi1/0/5-8
+sw ac vlan 34
+sw mo ac
+int range gi1/0/9-12
+sw ac vlan 35
+sw mo ac
+int range gi1/0/13-16
+sw ac vlan 36
+sw mo ac
+int range gi1/0/17-20
+sw ac vlan 37
+sw mo ac
+int gi1/0/21
+sw ac vlan 34
+sw mo ac
+int gi1/0/22
+sw tr all vlan 33-37
+sw mo tr
+int gi1/0/23
+sw tr all vlan 33-37
+sw mo tr
+channel-group 1 mode act
+int gi1/0/24
+sw tr all vlan 33-37
+sw mo tr
+channel-group 1 mode act
+int vlan1
+no ip add
+sh
+end
+wr
+
+
+
+
+conf t
+host Router
+ip dhcp ex 148.60.33.1 148.60.33.10
+ip dhcp ex 148.60.34.1 148.60.34.10
+ip dhcp ex 148.60.35.1 148.60.35.10
+ip dhcp ex 148.60.36.1 148.60.36.10
+ip dhcp ex 148.60.37.1 148.60.37.10
+ip dhcp pool POOL_GestionTI
+net 148.60.33.0 255.255.255.0
+def 148.60.33.1
+ip dhcp pool POOL_GestionWLAN
+net 148.60.34.0 255.255.255.0
+def 148.60.34.1
+ip dhcp pool POOL_VentasWLAN
+net 148.60.35.0 255.255.255.0
+def 148.60.35.1
+ip dhcp pool POOL_Compras
+net 148.60.36.0 255.255.255.0
+def 148.60.36.1
+ip dhcp pool POOL_Practicantes
+net 148.60.37.0 255.255.255.0
+def 148.60.37.1
+no ip cef
+no ipv6 cef
+int gi0/0
+no ip add
+int gi0/0.33
+encap dot1q 33
+ip add 148.60.33.1 255.255.255.0
+int gi0/0.34
+encap dot1q 34
+ip add 148.60.34.1 255.255.255.0
+int gi0/0.35
+encap dot1q 35
+ip add 148.60.35.1 255.255.255.0
+int gi0/0.36
+encap dot1q 36
+ip add 148.60.36.1 255.255.255.0
+int gi0/0.37
+encap dot1q 37
+ip add 148.60.37.1 255.255.255.0
+int vlan1
+sh
+ip classless
+end
+wr
+
+
+
+
