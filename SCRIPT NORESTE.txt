@@ -1,0 +1,366 @@
+SCRIPT
+! CONFIGURACIÓN BÁSICA
+hostname SW_3
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+no ip cef
+no ipv6 cef
+spanning-tree mode pvst
+
+! ------------------------------
+! CONFIGURACIÓN DE PUERTOS ACCESS
+! ------------------------------
+
+interface range GigabitEthernet1/0/1 - 5
+ switchport access vlan 97
+ switchport mode access
+exit
+
+interface range GigabitEthernet1/0/6 - 10
+ switchport access vlan 98
+ switchport mode access
+exit
+
+interface range GigabitEthernet1/0/11 - 15
+ switchport access vlan 99
+ switchport mode access
+exit
+
+interface range GigabitEthernet1/0/16 - 20
+ switchport access vlan 100
+ switchport mode access
+exit
+
+! ------------------------------
+! PUERTOS SIN CONFIGURACIÓN
+! ------------------------------
+
+interface GigabitEthernet1/0/21
+exit
+
+interface GigabitEthernet1/0/24
+exit
+
+interface GigabitEthernet1/1/1
+exit
+
+interface GigabitEthernet1/1/2
+exit
+
+interface GigabitEthernet1/1/3
+exit
+
+interface GigabitEthernet1/1/4
+exit
+
+! ------------------------------
+! CONFIGURACIÓN DE TRUNK
+! ------------------------------
+
+interface GigabitEthernet1/0/22
+ switchport trunk allowed vlan 97-100
+ switchport mode trunk
+exit
+
+interface GigabitEthernet1/0/23
+ switchport trunk allowed vlan 97-100
+ switchport mode trunk
+exit
+
+! ------------------------------
+! VLAN 1
+! ------------------------------
+interface Vlan1
+ no ip address
+ shutdown
+exit
+
+! ------------------------------
+! OTROS PARÁMETROS
+! ------------------------------
+ip classless
+ip flow-export version 9
+
+! ------------------------------
+! LÍNEAS DE ACCESO
+! ------------------------------
+line con 0
+exit
+
+line aux 0
+exit
+
+line vty 0 4
+ login
+exit
+
+
+hostname SW_2
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+
+! ------------------------------
+! EXCLUSIONES DHCP
+! ------------------------------
+ip dhcp excluded-address 148.60.97.1 148.60.97.10
+ip dhcp excluded-address 148.60.98.1 148.60.98.10
+ip dhcp excluded-address 148.60.99.1 148.60.99.10
+ip dhcp excluded-address 148.60.100.1 148.60.100.10
+
+! ------------------------------
+! POOLS DHCP
+! ------------------------------
+ip dhcp pool POOLIT
+ network 148.60.97.0 255.255.255.0
+ default-router 148.60.97.1
+
+ip dhcp pool POOLVENTAS
+ network 148.60.98.0 255.255.255.0
+ default-router 148.60.98.1
+
+ip dhcp pool POOLCOMPRAS
+ network 148.60.99.0 255.255.255.0
+ default-router 148.60.99.1
+
+ip dhcp pool POOLSERVICIOS
+ network 148.60.100.0 255.255.255.0
+ default-router 148.60.100.1
+
+no ip cef
+ip routing
+no ipv6 cef
+spanning-tree mode pvst
+
+! ------------------------------
+! TRONCALES
+! ------------------------------
+interface GigabitEthernet1/0/2
+ switchport trunk allowed vlan 97-100
+ switchport mode trunk
+exit
+
+interface GigabitEthernet1/0/3
+ switchport trunk allowed vlan 97-100
+ switchport mode trunk
+exit
+
+! ------------------------------
+! INTERFACES VLAN (SVI)
+! ------------------------------
+interface Vlan97
+ mac-address 00e0.f716.5b01
+ ip address 148.60.97.1 255.255.255.0
+exit
+
+interface Vlan98
+ mac-address 00e0.f716.5b02
+ ip address 148.60.98.1 255.255.255.0
+exit
+
+interface Vlan99
+ mac-address 00e0.f716.5b03
+ ip address 148.60.99.1 255.255.255.0
+exit
+
+interface Vlan100
+ mac-address 00e0.f716.5b04
+ ip address 148.60.100.1 255.255.255.0
+exit
+
+! ------------------------------
+! RIP
+! ------------------------------
+router rip
+ version 2
+ network 148.60.0.0
+ no auto-summary
+
+ip classless
+ip flow-export version 9
+
+line vty 0 4
+ login
+exit
+
+hostname SW_1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+no ip cef
+no ipv6 cef
+spanning-tree mode pvst
+
+! ------------------------------
+! PUERTOS ACCESS
+! ------------------------------
+interface range GigabitEthernet1/0/1, GigabitEthernet1/0/4-5
+ switchport access vlan 97
+ switchport mode access
+exit
+
+interface range GigabitEthernet1/0/2-3
+ switchport access vlan 97
+ switchport mode access
+exit
+
+interface range GigabitEthernet1/0/6-10
+ switchport access vlan 98
+ switchport mode access
+exit
+
+interface range GigabitEthernet1/0/11-15
+ switchport access vlan 99
+ switchport mode access
+exit
+
+interface range GigabitEthernet1/0/16-20
+ switchport access vlan 100
+ switchport mode access
+exit
+
+! ------------------------------
+! TRONCALES
+! ------------------------------
+interface GigabitEthernet1/0/22
+ switchport trunk allowed vlan 97-100
+ switchport mode trunk
+exit
+
+interface GigabitEthernet1/0/23
+ switchport trunk allowed vlan 97-100
+ switchport mode trunk
+exit
+
+interface GigabitEthernet1/0/24
+ switchport trunk allowed vlan 97-100
+ switchport mode trunk
+exit
+
+interface Vlan1
+ no ip address
+ shutdown
+exit
+
+ip classless
+ip flow-export version 9
+
+line vty 0 4
+ login
+exit
+
+hostname SW_4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+no ip cef
+no ipv6 cef
+spanning-tree mode pvst
+
+! ------------------------------
+! PUERTOS ACCESS
+! ------------------------------
+interface range GigabitEthernet1/0/1-5
+ switchport access vlan 97
+ switchport mode access
+exit
+
+interface range GigabitEthernet1/0/6-10
+ switchport access vlan 98
+ switchport mode access
+exit
+
+interface range GigabitEthernet1/0/11-15
+ switchport access vlan 99
+ switchport mode access
+exit
+
+interface range GigabitEthernet1/0/16-20
+ switchport access vlan 100
+ switchport mode access
+exit
+
+! ------------------------------
+! TRONCALES
+! ------------------------------
+interface GigabitEthernet1/0/22
+ switchport trunk allowed vlan 97-100
+ switchport mode trunk
+exit
+
+interface GigabitEthernet1/0/23
+ switchport trunk allowed vlan 97-100
+ switchport mode trunk
+exit
+
+interface GigabitEthernet1/0/24
+ switchport trunk allowed vlan 97-100
+ switchport mode trunk
+exit
+
+interface Vlan1
+ no ip address
+ shutdown
+exit
+
+ip classless
+ip flow-export version 9
+
+line vty 0 4
+ login
+exit
+
+hostname Router
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+no ip cef
+no ipv6 cef
+
+! ------------------------------
+! INTERFACES
+! ------------------------------
+interface GigabitEthernet0/0/1
+ ip address 168.40.254.1 255.255.0.0
+ duplex auto
+ speed auto
+exit
+
+interface GigabitEthernet0/0/0
+ shutdown
+exit
+
+interface GigabitEthernet0/0/2
+ shutdown
+exit
+
+interface Serial0/1/0
+ clock rate 2000000
+ shutdown
+exit
+
+interface Serial0/1/1
+ clock rate 2000000
+ shutdown
+exit
+
+interface Vlan1
+ shutdown
+exit
+
+! ------------------------------
+! RIP
+! ------------------------------
+router rip
+ version 2
+ network 168.40.0.0
+ no auto-summary
+
+ip classless
+ip flow-export version 9
+
+line vty 0 4
+ login
+exit
+
