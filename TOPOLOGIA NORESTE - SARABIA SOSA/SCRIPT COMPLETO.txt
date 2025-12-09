@@ -1,0 +1,643 @@
+SCRIPT COMPLETO
+ROUTER EL CABRITO
+en
+conf t
+
+!---- 1. SEGURIDAD BASICA Y USUARIO ----
+hostname ElCabrito
+no ip domain-lookup
+service password-encryption
+username ADMIN privilege 15 password 0 cisco
+
+---- 2. HABILITAR SSH  ----
+ip domain-name JuanMark.com
+ip ssh version 2
+crypto key generate rsa general-keys modulus 1024
+
+---- 3. CONFIGURACION DE INTERFACES ----
+
+interface GigabitEthernet0/0
+ no shutdown
+ exit
+interface GigabitEthernet0/1
+ no shutdown
+ exit
+
+---- 4. ENRUTAMIENTO (RIP) ----
+router rip
+ version 2
+ network 148.60.0.0
+ no auto-summary
+ exit
+
+---- 5. LINEAS DE ACCESO (VTY) ----
+line vty 0 4
+ login local
+ transport input ssh
+ exit
+
+---- GUARDAR ----
+end
+write
+
+ROUTER LA VACA
+en
+conf t
+
+! ROUTER LA VACA
+
+enable
+configure terminal
+
+!---- 1. SEGURIDAD BASICA Y USUARIO ----
+hostname LaVaca
+no ip domain-lookup
+service password-encryption
+username ADMIN privilege 15 password 0 cisco
+
+!---- 2. HABILITAR SSH ----
+ip domain-name JuanMark.com
+ip ssh version 2
+crypto key generate rsa general-keys modulus 1024
+
+!---- 3. CONFIGURACION DE INTERFACES ----
+
+! Encender interfaces fisicas
+interface GigabitEthernet0/0
+ no shutdown
+ exit
+interface GigabitEthernet0/1
+ no shutdown
+ exit
+
+! Sub-interfaces (VLANs + HSRP)
+interface GigabitEthernet0/1.97
+ encapsulation dot1Q 97 native
+ ip address 148.60.97.3 255.255.255.0
+ standby 97 ip 148.60.97.1
+ standby 97 preempt
+ exit
+
+interface GigabitEthernet0/1.98
+ encapsulation dot1Q 98
+ ip address 148.60.98.3 255.255.255.0
+ standby 98 ip 148.60.98.1
+ standby 98 preempt
+ exit
+
+interface GigabitEthernet0/1.99
+ encapsulation dot1Q 99
+ ip address 148.60.99.3 255.255.255.0
+ standby 99 ip 148.60.99.1
+ standby 99 preempt
+ exit
+
+interface GigabitEthernet0/1.100
+ encapsulation dot1Q 100
+ ip address 148.60.100.3 255.255.255.0
+ standby 100 ip 148.60.100.1
+ standby 100 preempt
+ exit
+
+! Interfaz Serial (WAN)
+interface Serial0/2/0
+ ip address 148.60.200.2 255.255.255.252
+ clock rate 2000000
+ no shutdown
+ exit
+
+!---- 4. ENRUTAMIENTO (RIP) ----
+router rip
+ version 2
+ network 148.60.0.0
+ no auto-summary
+ exit
+
+!---- 5. LINEAS DE ACCESO (VTY) ----
+line vty 0 4
+ login local
+ transport input ssh
+ exit
+
+!---- GUARDAR ----
+end
+write
+
+! ROUTER LA SILLA (CON RIP)
+
+enable
+configure terminal
+
+!---- 1. SEGURIDAD BASICA Y USUARIO ----
+hostname LaSilla
+no ip domain-lookup
+service password-encryption
+username ADMIN privilege 15 password 0 cisco
+
+!---- 2. HABILITAR SSH ----
+ip domain-name JuanMark.com
+ip ssh version 2
+crypto key generate rsa general-keys modulus 1024
+
+!---- 3. CONFIGURACION DE INTERFACES ----
+
+! Encender interfaz fisica base
+interface GigabitEthernet0/0
+ no shutdown
+ exit
+
+! Sub-interfaces (VLANs + HSRP - ACTIVO Priority 110)
+interface GigabitEthernet0/0.97
+ encapsulation dot1Q 97 native
+ ip address 148.60.97.2 255.255.255.0
+ standby 97 ip 148.60.97.1
+ standby 97 priority 110
+ standby 97 preempt
+ exit
+
+interface GigabitEthernet0/0.98
+ encapsulation dot1Q 98
+ ip address 148.60.98.2 255.255.255.0
+ standby 98 ip 148.60.98.1
+ standby 98 priority 110
+ standby 98 preempt
+ exit
+
+interface GigabitEthernet0/0.99
+ encapsulation dot1Q 99
+ ip address 148.60.99.2 255.255.255.0
+ standby 99 ip 148.60.99.1
+ standby 99 priority 110
+ standby 99 preempt
+ exit
+
+interface GigabitEthernet0/0.100
+ encapsulation dot1Q 100
+ ip address 148.60.100.2 255.255.255.0
+ standby 100 ip 148.60.100.1
+ standby 100 priority 110
+ standby 100 preempt
+ exit
+
+!---- 4. ENRUTAMIENTO (RIP) ----
+router rip
+ version 2
+ network 148.60.0.0
+ no auto-summary
+ exit
+
+!---- 5. LINEAS DE ACCESO (VTY) ----
+line vty 0 4
+ login local
+ transport input ssh
+ exit
+
+!---- GUARDAR ----
+end
+write
+
+SWITCHES
+SW1 
+
+enable
+configure terminal
+
+!---- 1. AJUSTES GENERALES Y USUARIO ----
+hostname SW1
+no ip domain-lookup
+service password-encryption
+username ADMIN privilege 15 password 0 cisco
+
+!---- 2. SSH  ----
+ip domain-name JuanMark.com
+ip ssh version 2
+crypto key generate rsa general-keys modulus 1024
+
+!---- 3. SPANNING TREE ----
+spanning-tree mode pvst
+spanning-tree vlan 99-100 priority 16384
+spanning-tree vlan 97-98 priority 28672
+
+!---- 4. PUERTOS TRONCALES (F0/1 - F0/3) ----
+interface range FastEthernet0/1 - 3
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 97
+ switchport trunk allowed vlan 97-100
+ no shutdown
+ exit
+
+!---- 5. PUERTOS DE ACCESO Y SEGURIDAD ----
+
+! Puertos Libres (F0/4 - F0/12)
+interface range FastEthernet0/4 - 12
+ switchport mode access
+ switchport port-security
+ switchport port-security mac-address sticky
+ no shutdown
+ exit
+
+! VLAN 97 (F0/13 - F0/15)
+interface range FastEthernet0/13 - 15
+ switchport access vlan 97
+ switchport mode access
+ switchport port-security
+ switchport port-security mac-address sticky
+ no shutdown
+ exit
+
+! VLAN 98 (F0/16 - F0/18)
+interface range FastEthernet0/16 - 18
+ switchport access vlan 98
+ switchport mode access
+ switchport port-security
+ switchport port-security mac-address sticky
+ no shutdown
+ exit
+
+! VLAN 99 (F0/19 - F0/21)
+interface range FastEthernet0/19 - 21
+ switchport access vlan 99
+ switchport mode access
+ switchport port-security
+ switchport port-security mac-address sticky
+ no shutdown
+ exit
+
+! VLAN 100 (F0/22 - F0/24)
+interface range FastEthernet0/22 - 24
+ switchport access vlan 100
+ switchport mode access
+ switchport port-security
+ switchport port-security mac-address sticky
+ no shutdown
+ exit
+
+!---- 6. LINEAS VTY ----
+line vty 0 4
+ login local
+ transport input ssh
+ exit
+
+!---- GUARDAR ----
+end
+write
+
+
+SW2
+! SW2 CONFIGURATION (SOLO SHOW RUN)
+
+enable
+configure terminal
+
+!---- 1. AJUSTES GENERALES ----
+hostname SW2
+no ip domain-lookup
+service password-encryption
+username ADMIN privilege 15 password 0 cisco
+
+!---- 2. SSH ----
+ip domain-name JuanMark.com
+ip ssh version 2
+crypto key generate rsa general-keys modulus 1024
+
+!---- 3. SERVIDOR DHCP ----
+! Exclusiones (IPs que no se deben prestar)
+ip dhcp excluded-address 148.60.97.1 148.60.97.10
+ip dhcp excluded-address 148.60.98.1 148.60.98.10
+ip dhcp excluded-address 148.60.99.1 148.60.99.10
+ip dhcp excluded-address 148.60.100.1 148.60.100.10
+
+! Pools de DHCP
+ip dhcp pool NE_TI
+ network 148.60.97.0 255.255.255.0
+ default-router 148.60.97.3
+ exit
+
+ip dhcp pool NE_VENTAS
+ network 148.60.98.0 255.255.255.0
+ default-router 148.60.98.3
+ exit
+
+ip dhcp pool NE_COMPRAS
+ network 148.60.99.0 255.255.255.0
+ default-router 148.60.99.3
+ exit
+
+ip dhcp pool NE_SERVICIOS
+ network 148.60.100.0 255.255.255.0
+ default-router 148.60.100.3
+ exit
+
+!---- 4. SPANNING TREE ----
+spanning-tree mode pvst
+
+!---- 5. PUERTOS TRONCALES (F0/1 - F0/3) ----
+interface range FastEthernet0/1 - 3
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 97
+ switchport trunk allowed vlan 97-100
+ no shutdown
+ exit
+
+!---- 6. PUERTOS DE ACCESO Y SEGURIDAD ----
+
+! Puertos Libres (F0/4 - F0/12)
+interface range FastEthernet0/4 - 12
+ switchport mode access
+ switchport port-security
+ switchport port-security mac-address sticky
+ no shutdown
+ exit
+
+! VLAN 97 (F0/13 - F0/15)
+interface range FastEthernet0/13 - 15
+ switchport access vlan 97
+ switchport mode access
+ switchport port-security
+ switchport port-security mac-address sticky
+ no shutdown
+ exit
+
+! VLAN 98 (F0/16 - F0/18)
+interface range FastEthernet0/16 - 18
+ switchport access vlan 98
+ switchport mode access
+ switchport port-security
+ switchport port-security mac-address sticky
+ no shutdown
+ exit
+
+! VLAN 99 (F0/19 - F0/21)
+interface range FastEthernet0/19 - 21
+ switchport access vlan 99
+ switchport mode access
+ switchport port-security
+ switchport port-security mac-address sticky
+ no shutdown
+ exit
+
+! VLAN 100 (F0/22 - F0/24)
+interface range FastEthernet0/22 - 24
+ switchport access vlan 100
+ switchport mode access
+ switchport port-security
+ switchport port-security mac-address sticky
+ no shutdown
+ exit
+
+!---- 7. INTERFACES VLAN (SVI) ----
+
+interface Vlan97
+ description NE_TI
+ mac-address 0006.2a29.ba01
+ ip address 148.60.97.4 255.255.255.0
+ no shutdown
+ exit
+
+interface Vlan98
+ description NE_VENTAS
+ mac-address 0006.2a29.ba02
+ ip address 148.60.98.4 255.255.255.0
+ no shutdown
+ exit
+
+interface Vlan99
+ description NE_COMPRAS
+ mac-address 0006.2a29.ba03
+ ip address 148.60.99.4 255.255.255.0
+ no shutdown
+ exit
+
+interface Vlan100
+ description NE_SERVICIOS
+ mac-address 0006.2a29.ba04
+ ip address 148.60.100.4 255.255.255.0
+ no shutdown
+ exit
+
+!---- 8. LINEAS VTY ----
+line vty 0 4
+ login local
+ transport input ssh
+ exit
+
+!---- GUARDAR ----
+end
+write
+
+SW3
+enable
+configure terminal
+
+!---- 1. AJUSTES GENERALES ----
+hostname SW3
+no ip domain-lookup
+service password-encryption
+username ADMIN privilege 15 password 0 cisco
+
+!---- 2. SSH ----
+ip domain-name JuanMark.com
+ip ssh version 2
+crypto key generate rsa general-keys modulus 1024
+
+!---- 3. SPANNING TREE ----
+spanning-tree mode pvst
+spanning-tree vlan 99 priority 8192
+spanning-tree vlan 98 priority 20480
+spanning-tree vlan 97 priority 24576
+spanning-tree vlan 100 priority 28672
+
+!---- 4. PUERTOS TRONCALES (F0/1 - F0/3) ----
+interface range FastEthernet0/1 - 3
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 97
+ switchport trunk allowed vlan 97-100
+ no shutdown
+ exit
+
+!---- 5. PUERTOS DE ACCESO Y SEGURIDAD ----
+
+! Puertos Libres (F0/4 - F0/12)
+interface range FastEthernet0/4 - 12
+ switchport mode access
+ switchport port-security
+ switchport port-security mac-address sticky 
+ no shutdown
+ exit
+
+! VLAN 97 (F0/13 - F0/15)
+interface range FastEthernet0/13 - 15
+ switchport access vlan 97
+ switchport mode access
+ switchport port-security
+ switchport port-security mac-address sticky 
+ no shutdown
+ exit
+
+! Configuración específica MAC Sticky VLAN 97
+interface FastEthernet0/13
+ switchport port-security mac-address sticky 0090.2B3D.A596
+ exit
+
+! VLAN 98 (F0/16 - F0/18)
+interface range FastEthernet0/16 - 18
+ switchport access vlan 98
+ switchport mode access
+ switchport port-security
+ switchport port-security mac-address sticky 
+ no shutdown
+ exit
+
+! Configuración específica MAC Sticky VLAN 98
+interface FastEthernet0/16
+ switchport port-security mac-address sticky 0060.5CD4.2B7C
+ exit
+
+! VLAN 99 (F0/19 - F0/21)
+interface range FastEthernet0/19 - 21
+ switchport access vlan 99
+ switchport mode access
+ switchport port-security
+ switchport port-security mac-address sticky 
+ no shutdown
+ exit
+
+! Configuración específica MAC Sticky VLAN 99
+interface FastEthernet0/19
+ switchport port-security mac-address sticky 0050.0F30.A6EC
+ exit
+
+! VLAN 100 (F0/22 - F0/24)
+interface range FastEthernet0/22 - 24
+ switchport access vlan 100
+ switchport mode access
+ switchport port-security
+ switchport port-security mac-address sticky 
+ no shutdown
+ exit
+
+!---- 6. LINEAS VTY ----
+line vty 0 4
+ login local
+ transport input ssh
+ exit
+
+!---- GUARDAR ----
+end
+write
+
+SW4
+enable
+configure terminal
+
+!---- 1. AJUSTES GENERALES ----
+hostname SW4
+no ip domain-lookup
+service password-encryption
+username ADMIN privilege 15 password 0 cisco
+
+!---- 2. SSH ----
+ip domain-name JuanMark.com
+ip ssh version 2
+crypto key generate rsa general-keys modulus 1024
+
+!---- 3. SPANNING TREE ----
+spanning-tree mode pvst
+spanning-tree vlan 99-100 priority 12288
+spanning-tree vlan 98 priority 24576
+spanning-tree vlan 97 priority 28672
+
+!---- 4. PUERTOS TRONCALES (F0/1 - F0/3) ----
+interface range FastEthernet0/1 - 3
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 97
+ no shutdown
+ exit
+
+!---- 5. PUERTOS DE ACCESO Y SEGURIDAD ----
+
+! Puertos Libres (F0/4 - F0/12) - Sin VLAN asignada en el show run
+interface range FastEthernet0/4 - 12
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security mac-address sticky 
+ no shutdown
+ exit
+
+! VLAN 97 (F0/13 - F0/15)
+interface range FastEthernet0/13 - 15
+ switchport access vlan 97
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security mac-address sticky 
+ no shutdown
+ exit
+
+! VLAN 98 - Con Port Security (F0/16)
+interface FastEthernet0/16
+ switchport access vlan 98
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security mac-address sticky 
+ switchport port-security mac-address sticky 00E0.F76C.2A48
+ no shutdown
+ exit
+
+
+
+! VLAN 98 - Con Port Security (F0/18)
+interface FastEthernet0/18
+ switchport access vlan 98
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security mac-address sticky 
+ no shutdown
+ exit
+
+! VLAN 99 (F0/19 - F0/21)
+interface range FastEthernet0/19 - 21
+ switchport access vlan 99
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security mac-address sticky 
+ no shutdown
+ exit
+
+! Configuración específica MAC Sticky F0/19
+interface FastEthernet0/19
+ switchport port-security mac-address sticky 0040.0BB0.ABD4
+ exit
+
+! VLAN 100 (F0/22 - F0/24)
+interface range FastEthernet0/22 - 24
+ switchport access vlan 100
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security mac-address sticky 
+ no shutdown
+ exit
+
+! Configuración específica MAC Sticky F0/22
+interface FastEthernet0/22
+ switchport port-security mac-address sticky 0009.7C99.9D7C
+ exit
+
+!---- 6. LINEAS VTY ----
+line vty 0 4
+ login local
+ transport input ssh
+ exit
+
+!---- GUARDAR ----
+end
+write
