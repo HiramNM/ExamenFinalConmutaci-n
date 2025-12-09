@@ -1,0 +1,198 @@
+Region Noroeste (NW)
+
+------------------------------------
+
+ROUTER
+
+ena
+conf t
+int gig0/0
+no shutdown
+
+
+------------------------------------
+
+SWITCHES
+
+------------------------------------
+
+Switch 10 (VTP Server)
+
+ena
+conf t
+vtp mode server
+vtp domain cisco
+vtp password cisco
+
+
+
+Switch 9 
+
+ena
+conf t
+vtp mode client
+vtp domain cisco
+vtp password cisco
+
+int gig0/1
+sw mode tr
+
+int range fa0/0-1
+
+int range fa0/1-5
+sw mode access
+sw access vlan 9
+
+int range fa0/6-10
+sw mode access
+sw access vlan 5
+
+int range fa0/11-15
+sw mode access
+sw access vlan 6
+
+int range fa0/16-20
+sw mode access
+sw access vlan 7
+
+---------------------------------
+
+ip domain-name juanmark.com
+crypto key generate rsa
+1024
+username admin secret ccna
+line vty 0 15
+transport input ssh
+login local
+exit
+ip ssh version 2
+
+--------------------------------
+
+switchport port-security
+switchport port-security maximum 1
+switchport port-security violation shutdown
+
+---------------------------------
+
+enable
+configure terminal
+
+! 1. Habilitar el enrutamiento IPv6
+ipv6 unicast-routing
+
+! 2. Crear un Pool de DHCPv6
+ipv6 dhcp pool JUANMARK-V6
+ dns-server 2001:4860:4860::8888
+ domain-name juanmark.com
+ exit
+
+! 3. Configurar Subinterfaz VLAN 5 (Marketing)
+interface GigabitEthernet0/0.5
+ ipv6 address 2006:AFEA:B0CA:5::1/64
+ ipv6 dhcp server JUANMARK-V6
+ ipv6 nd other-config-flag
+ exit
+
+! 4. Configurar Subinterfaz VLAN 6 (Ventas)
+interface GigabitEthernet0/0.6
+ ipv6 address 2006:AFEA:B0CA:6::1/64
+ ipv6 dhcp server JUANMARK-V6
+ ipv6 nd other-config-flag
+ exit
+
+! 5. Configurar Subinterfaz VLAN 7 (Compras)
+interface GigabitEthernet0/0.7
+ ipv6 address 2006:AFEA:B0CA:7::1/64
+ ipv6 dhcp server JUANMARK-V6
+ ipv6 nd other-config-flag
+ exit
+
+! 6. Configurar Subinterfaz VLAN 9 (Gestión TI)
+interface GigabitEthernet0/0.9
+ ipv6 address 2006:AFEA:B0CA:9::1/64
+ ipv6 dhcp server JUANMARK-V6
+ ipv6 nd other-config-flag
+ exit
+
+-------------------------------------
+
+enable
+configure terminal
+
+interface vlan 9
+
+ipv6 address 2006:AFEA:B0CA:8::8/64
+ 
+exit
+
+-------------------------------------
+
+enable
+configure terminal
+
+interface vlan 9
+
+ipv6 address 2006:AFEA:B0CA:9::9/64
+ 
+exit
+
+---------------------------------------
+
+enable
+configure terminal
+
+interface vlan 9
+
+ipv6 address 2006:AFEA:B0CA:9::10/64
+ 
+exit
+
+---------------------------------------
+enable
+configure terminal
+
+interface vlan 9
+
+ipv6 address 2006:AFEA:B0CA:9::11/64
+ 
+exit
+
+---------------------------------------
+SSH - Router
+
+ip domain-name cisco.com
+crypto key generate rsa
+ip ssh version 2
+
+line vty 0 4
+transport input ssh
+login local
+username ADMIN privilege 15 pass cisco111
+enable secret cisco123
+----------------------------------------
+
+Routers
+
+ip domain-name cisco.com
+crypto key generate rsa
+ip ssh version 2
+
+line vty 0 4
+transport input ssh
+login local
+username ADMIN privilege 15 pass cisco111
+enable secret cisco123
+
+-----------------------------------------
+
+Security ports
+
+conf t
+interface range f0/1-20 
+switchport mode access
+switchport port-security
+switchport port-security maximum 1
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+exit
