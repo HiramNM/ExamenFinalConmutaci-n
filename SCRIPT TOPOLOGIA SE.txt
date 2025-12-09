@@ -126,6 +126,8 @@ interface port-channel 5
  switchport trunk native vlan 99
  switchport trunk allowed vlan 65,66,67,68,99
 
+spanning-tree vlan 65-68,99 root primary
+
 
 MS2***************************************************************
 
@@ -164,6 +166,8 @@ int range g1/0/7-8
  switchport trunk native vlan 99
  switchport trunk allowed vlan 65,66,67,68,99
 
+spanning-tree vlan 65-68,99 root secondary
+
 MS3***************************************************************
 
 vtp mode client
@@ -195,18 +199,22 @@ vtp domain juanmark.com
 interface range fa0/1 - 5
  switchport mode access
  switchport access vlan 65
+spanning-tree portfast default
 
 interface range fa0/6 - 10
  switchport mode access
  switchport access vlan 66
+spanning-tree portfast default
 
 interface range fa0/11 - 15
  switchport mode access
  switchport access vlan 67
+spanning-tree portfast default
 
 interface range fa0/16 - 20
  switchport mode access
  switchport access vlan 68
+spanning-tree portfast default
 
 int range g0/1-2
  switchport mode trunk
@@ -230,18 +238,22 @@ vtp domain juanmark.com
 interface range fa0/1 - 5
  switchport mode access
  switchport access vlan 65
+spanning-tree portfast default
 
 interface range fa0/6 - 10
  switchport mode access
  switchport access vlan 66
+spanning-tree portfast default
 
 interface range fa0/11 - 15
  switchport mode access
  switchport access vlan 67
+spanning-tree portfast default
 
 interface range fa0/16 - 20
  switchport mode access
  switchport access vlan 68
+spanning-tree portfast default
 
 int range g0/1-2
  switchport mode trunk
@@ -381,18 +393,22 @@ vtp domain juanmark.com
 interface range fa0/1 - 5
  switchport mode access
  switchport access vlan 65
+spanning-tree portfast default
 
 interface range fa0/6 - 10
  switchport mode access
  switchport access vlan 66
+spanning-tree portfast default
 
 interface range fa0/11 - 15
  switchport mode access
  switchport access vlan 67
+spanning-tree portfast default
 
 interface range fa0/16 - 20
  switchport mode access
  switchport access vlan 68
+spanning-tree portfast default
 
 int range g0/1-2
  switchport mode trunk
@@ -411,18 +427,22 @@ vtp domain juanmark.com
 interface range fa0/1 - 5
  switchport mode access
  switchport access vlan 65
+spanning-tree portfast default
 
 interface range fa0/6 - 10
  switchport mode access
  switchport access vlan 66
+spanning-tree portfast default
 
 interface range fa0/11 - 15
  switchport mode access
  switchport access vlan 67
+spanning-tree portfast default
 
 interface range fa0/16 - 20
  switchport mode access
  switchport access vlan 68
+spanning-tree portfast default
 
 int range g0/1-2
  switchport mode trunk
