@@ -38,6 +38,8 @@ vlan 67
  name COMPRAS
 vlan 68
  name MKT
+VLAN 99
+NAME NATIVA
 
 ! DHCP Pools
 ip dhcp pool VENTAS
@@ -56,12 +58,16 @@ ip dhcp pool MKT
  network 148.60.68.0 255.255.255.0
  default-router 148.60.68.1
 
+ip dhcp pool AP
+ network 148.60.99.0 255.255.255.0
+ default-router 148.60.99.1
+
 ip dhcp excluded-address 148.60.65.1 148.60.65.5
 ip dhcp excluded-address 148.60.66.1 148.60.66.5
 ip dhcp excluded-address 148.60.67.1 148.60.67.5
 ip dhcp excluded-address 148.60.68.1 148.60.68.5
 ip dhcp excluded-address 148.60.68.1 148.60.68.5
-
+ip dhcp excluded-address 148.60.99.1 148.60.99.10
 
 ip routing
 interface vlan 65
@@ -76,17 +82,22 @@ interface vlan 67
 interface vlan 68
  ip address 148.60.68.1 255.255.255.0
 
+ interface vlan 99
+ ip address 148.60.99.1 255.255.255.0
+
 int g1/0/1
 no sw
 ip add 148.60.68.2 255.255.255.252
 
 int g1/0/6
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int g1/0/24
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int range g1/0/2-3
  channel-group 1 mode active
@@ -94,7 +105,8 @@ int range g1/0/2-3
 
 interface port-channel 1
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int range g1/0/16-17
  channel-group 6 mode active
@@ -102,7 +114,8 @@ int range g1/0/16-17
 
 interface port-channel 6
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int range g1/0/10-11
  channel-group 5 mode active
@@ -110,11 +123,8 @@ int range g1/0/10-11
 
 interface port-channel 5
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
-
-VLAN 99
-NAME NATIVA
-
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 
 MS2***************************************************************
@@ -128,7 +138,8 @@ int range g1/0/2-3
 
 interface port-channel 1
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int range g1/0/4-5
  channel-group 2 mode active
@@ -136,7 +147,8 @@ int range g1/0/4-5
 
 interface port-channel 2
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int range g1/0/16-17
  channel-group 7 mode active
@@ -144,11 +156,13 @@ int range g1/0/16-17
 
 interface port-channel 7
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int range g1/0/7-8
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 MS3***************************************************************
 
@@ -161,11 +175,13 @@ int range g1/0/4-5
 
 interface port-channel 2
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int range g1/0/6-8
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 SW AS 1 ********************************************************
 
@@ -194,11 +210,13 @@ interface range fa0/16 - 20
 
 int range g0/1-2
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int fa0/24
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 SW AS 2 ********************************************************
 
@@ -227,7 +245,8 @@ interface range fa0/16 - 20
 
 int range g0/1-2
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 MS4***************************************************************
 enable 
@@ -239,11 +258,13 @@ vtp domain juanmark.com
 
 int g1/0/1
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int g1/0/6
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int range g1/0/10-11
  channel-group 5 mode active
@@ -251,7 +272,8 @@ int range g1/0/10-11
 
 interface port-channel 5
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int range g1/0/16-17
  channel-group 7 mode active
@@ -259,7 +281,8 @@ int range g1/0/16-17
 
 interface port-channel 7
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int range g1/0/2-3
  channel-group 4 mode active
@@ -267,7 +290,8 @@ int range g1/0/2-3
 
 interface port-channel 4
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 MS5***************************************************************
 
@@ -280,7 +304,8 @@ int range g1/0/2-3
 
 interface port-channel 4
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int range g1/0/4-5
  channel-group 3 mode active
@@ -288,7 +313,8 @@ int range g1/0/4-5
 
 interface port-channel 3
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int range g1/0/16-17
  channel-group 6 mode active
@@ -296,7 +322,8 @@ int range g1/0/16-17
 
 interface port-channel 6
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int range g1/0/4-5
  channel-group 2 mode active
@@ -304,11 +331,13 @@ int range g1/0/4-5
 
 int g1/0/1
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int g1/0/14
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 MS6***************************************************************
 
@@ -322,19 +351,23 @@ int range g1/0/4-5
 
 interface port-channel 3
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int g1/0/1
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int g1/0/6
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int g1/0/14
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 SW AS 3 ********************************************************
 
@@ -363,7 +396,8 @@ interface range fa0/16 - 20
 
 int range g0/1-2
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 SW AS 4 ********************************************************
 
@@ -392,11 +426,13 @@ interface range fa0/16 - 20
 
 int range g0/1-2
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 int fa0/24
  switchport mode trunk
- switchport trunk allowed vlan 65,66,67,68
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 65,66,67,68,99
 
 
 
