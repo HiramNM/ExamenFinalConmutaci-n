@@ -1,0 +1,268 @@
+// Router-Centro
+ena
+conf t
+
+hostname Router-Centro
+
+ip dhcp excluded-address 148.60.33.1 148.60.33.10
+ip dhcp excluded-address 148.60.34.1 148.60.34.10
+ip dhcp excluded-address 148.60.35.1 148.60.35.10
+ip dhcp excluded-address 148.60.36.1 148.60.36.10
+ip dhcp excluded-address 148.60.37.1 148.60.37.10
+
+ip dhcp pool POOL_GestionTI
+ network 148.60.33.0 255.255.255.0
+ default-router 148.60.33.1
+
+ip dhcp pool POOL_GestionWLAN
+ network 148.60.34.0 255.255.255.0
+ default-router 148.60.34.1
+
+ip dhcp pool POOL_VentasWLAN
+ network 148.60.35.0 255.255.255.0
+ default-router 148.60.35.1
+
+ip dhcp pool POOL_Compras
+ network 148.60.36.0 255.255.255.0
+ default-router 148.60.36.1
+
+ip dhcp pool POOL_Practicantes
+ network 148.60.37.0 255.255.255.0
+ default-router 148.60.37.1
+
+no ip cef
+no ipv6 cef
+spanning-tree mode pvst
+
+int g0/0
+no ip address
+
+int g0/0.33
+enc dot1q 33
+ip address 148.60.33.1 255.255.255.0
+
+int g0/0.34
+enc dot1q 34 native
+ip address 148.60.34.1 255.255.255.0
+
+int g0/0.35
+enc dot1q 35
+ip address 148.60.35.1 255.255.255.0
+
+int g0/0.36
+enc dot1q 36
+ip address 148.60.36.1 255.255.255.0
+
+int g0/0.37
+enc dot1q 37
+ip address 148.60.37.1 255.255.255.0
+
+
+
+//Switch de Distribucion del edificio Principal (SD-Principal)
+ena
+conf t
+
+hostname SD-Principal
+
+vtp mode server
+vtp domain JuanMark.com
+vtp password 123
+vtp version 2
+
+ip routing
+
+ip arp inspection vlan 33-37
+ip dhcp snooping vlan 33-37
+no ip dhcp snooping information option
+ip dhcp snooping
+
+vlan 33
+name GestionTI
+vlan 34
+name GestionWLAN
+vlan 35
+name VentasWLAN
+vlan 36
+name Compras
+vlan 37
+name PracticantesWLAN
+
+int range gig1/0/1-19
+sw mode access
+sw port-security
+sw port-security mac-address sticky
+
+int range gig1/0/20-24
+ip arp inspection trust
+ip dhcp snooping trust
+sw trunk native vlan 34
+sw trunk allowed vlan 33-37
+sw mode trunk
+sw nonegotiate
+
+
+
+//Switch de Distribucion del edificio Anexo (SD-Anexo)
+ena
+conf t
+
+hostname SD-Anexo
+
+vtp mode client
+vtp domain JuanMark.com
+vtp password 123
+vtp version 2
+
+ip arp inspection vlan 33-37
+ip dhcp snooping vlan 33-37
+no ip dhcp snooping information option
+ip dhcp snooping
+spanning-tree mode pvst
+
+int range gig1/0/1-4
+sw access vlan 33
+sw mode access
+sw port-security
+sw port-security mac-address sticky
+
+int range gig1/0/5-8
+sw access vlan 34
+sw mode access
+sw port-security
+sw port-security mac-address sticky
+
+int gig1/0/5
+sw port-security mac-address sticky
+
+int range gig1/0/9-12
+sw access vlan 35
+sw mode access
+sw port-security
+sw port-security mac-address sticky
+
+int range gig1/0/13-16
+sw access vlan 36
+sw mode access
+sw port-security
+sw port-security mac-address sticky
+
+int range gig1/0/17-20
+sw access vlan 37
+sw mode access
+sw port-security
+sw port-security mac-address sticky
+
+int gig1/0/19
+sw port-security mac-address sticky
+
+int range gig1/0/21-24
+sw mode trunk
+sw trunk native vlan 34
+sw trunk allowed vlan 33-37
+sw nonegotiate
+ip arp inspection trust
+ip dhcp snooping trust
+
+
+
+// Switch de Acceso Anexo
+ena
+conf t
+
+hostname SA-Acceso
+
+vtp mode client
+vtp domain JuanMark.com
+vtp password 123
+
+
+ip arp inspection vlan 33-37
+ip dhcp snooping vlan 33-37
+no ip dhcp snooping information option
+ip dhcp snooping
+spanning-tree mode pvst
+
+int range fa0/1-4
+sw access vlan 33
+sw mode access
+sw port-security
+sw port-security mac-address sticky
+
+int fa0/1
+sw port-security mac-address sticky
+
+int range fa0/5-8
+sw access vlan 34
+sw mode access
+sw port-security
+sw port-security mac-address sticky
+
+int fa0/6
+sw port-security mac-address sticky
+
+int range fa0/9-12
+sw access vlan 35
+sw mode access
+sw port-security
+sw port-security mac-address sticky
+
+int range fa0/13-16
+sw access vlan 36
+sw mode access
+sw port-security
+sw port-security mac-address sticky
+
+int range fa0/17-20
+sw access vlan 37
+sw mode access
+sw port-security
+sw port-security mac-address sticky
+
+int range fa0/21-24
+sw mode access
+sw port-security
+sw port-security mac-address sticky
+
+int range gi0/1-2
+sw mode trunk
+sw trunk native vlan 34
+sw nonegotiate
+ip arp inspection trust
+ip dhcp snooping trust
+
+
+// Switch de Acceso Principal
+ena
+conf t
+
+hostname SA-Principal
+
+vtp mode client
+vtp domain JuanMark.com
+vtp password 123
+vtp version 2
+
+ip arp inspection vlan 33-37
+ip dhcp snooping vlan 33-37
+no ip dhcp snooping information option
+ip dhcp snooping
+spanning-tree mode pvst
+
+int range fa0/1-4
+sw access vlan 33
+sw mode access
+sw port-security
+sw port-security mac-address sticky
+
+int fa0/1
+sw port-security mac-address sticky
+
+int fa0/2
+sw port-security mac-address sticky
+
+int range fa0/5-7
+sw access vlan 34
+sw mode access
+sw port-security
+sw port-security mac-address sticky
