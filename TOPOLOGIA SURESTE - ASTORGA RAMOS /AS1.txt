@@ -1,0 +1,58 @@
+
+enable 
+configure terminal
+hostname AS1
+
+vtp mode client
+vtp domain juanmark.com
+
+interface range fa0/1 - 5
+ switchport mode access
+ switchport access vlan 65
+spanning-tree portfast default
+
+interface range fa0/6 - 10
+ switchport mode access
+ switchport access vlan 66
+spanning-tree portfast default
+
+interface range fa0/11 - 15
+ switchport mode access
+ switchport access vlan 67
+spanning-tree portfast default
+
+interface range fa0/16 - 20
+ switchport mode access
+ switchport access vlan 68
+spanning-tree portfast default
+
+int range g0/1-2
+ switchport mode trunk
+ switchport trunk native vlan 69
+ switchport trunk allowed vlan 65,66,67,68,69
+
+int fa0/24
+ switchport mode trunk
+ switchport trunk native vlan 69
+ switchport trunk allowed vlan 65,66,67,68,69
+
+
+ip domain-name juanmark.com
+crypto key generate rsa 
+1024
+username admin secret ccna
+line vty 0 15
+transport input ssh
+login local
+exit
+ip ssh version 2
+
+int range fa0/1-23
+sw mo acc
+switchport port-security
+switchport port-security maximum 1
+switchport port-security violation shutdown
+
+int vlan 69
+IP ADD 148.60.69.5 255.255.255.0
+NO SH

@@ -1,0 +1,154 @@
+enable 
+configure terminal
+hostname MS1
+
+vtp mode server
+vtp domain juanmark.com
+
+ip routing
+
+vlan 65
+ name VENTAS
+vlan 66
+ name TI
+vlan 67
+ name COMPRAS
+vlan 68
+ name MKT
+VLAN 69
+NAME ADMIN
+
+! DHCP Pools
+ip dhcp pool VENTAS
+ network 148.60.65.0 255.255.255.0
+ default-router 148.60.65.1
+
+ip dhcp pool TI
+ network 148.60.66.0 255.255.255.0
+ default-router 148.60.66.1
+
+ip dhcp pool COMPRAS
+ network 148.60.67.0 255.255.255.0
+ default-router 148.60.67.1
+
+ip dhcp pool MKT
+ network 148.60.68.0 255.255.255.0
+ default-router 148.60.68.1
+
+ip dhcp pool AP
+ network 148.60.69.0 255.255.255.0
+ default-router 148.60.69.1
+
+ip dhcp excluded-address 148.60.65.1 148.60.65.5
+ip dhcp excluded-address 148.60.66.1 148.60.66.5
+ip dhcp excluded-address 148.60.67.1 148.60.67.5
+ip dhcp excluded-address 148.60.68.1 148.60.68.5
+ip dhcp excluded-address 148.60.68.1 148.60.68.5
+ip dhcp excluded-address 148.60.69.1 148.60.69.10
+ip dhcp excluded-address 148.60.69.253
+
+
+ip routing
+interface vlan 65
+ ip address 148.60.65.1 255.255.255.0
+
+interface vlan 66
+ ip address 148.60.66.1 255.255.255.0
+
+interface vlan 67
+ ip address 148.60.67.1 255.255.255.0
+
+interface vlan 68
+ ip address 148.60.68.1 255.255.255.0
+
+ interface vlan 69
+ ip address 148.60.69.1 255.255.255.0
+
+interface vlan 70
+ ip address 148.60.70.1 255.255.255.0
+
+int g1/0/1
+sw mo access
+sw acc vlan 70
+ 
+int g1/0/6
+ switchport mode trunk
+ switchport trunk native vlan 69
+ switchport trunk allowed vlan 65,66,67,68,69
+
+int g1/0/24
+ switchport mode trunk
+ switchport trunk native vlan 69
+ switchport trunk allowed vlan 65,66,67,68,69
+
+int range g1/0/2-3
+ channel-group 1 mode active
+ ex
+
+interface port-channel 1
+ switchport mode trunk
+ switchport trunk native vlan 69
+ switchport trunk allowed vlan 65,66,67,68,69
+
+int range g1/0/16-17
+ channel-group 6 mode active
+ ex
+
+interface port-channel 6
+ switchport mode trunk
+ switchport trunk native vlan 69
+ switchport trunk allowed vlan 65,66,67,68,69
+
+int range g1/0/10-11
+ channel-group 5 mode active
+ ex
+
+interface port-channel 5
+ switchport mode trunk
+ switchport trunk native vlan 69
+ switchport trunk allowed vlan 65,66,67,68,69
+
+spanning-tree vlan 65-66,69 root primary
+spanning-tree vlan 67-68 root secondary
+
+ip domain-name juanmark.com
+crypto key generate rsa 
+1024
+username admin secret ccna
+line vty 0 15
+transport input ssh
+login local
+exit
+ip ssh version 2
+
+interface Vlan65
+ standby version 2
+ standby 65 ip 148.60.65.254
+ standby 65 priority 110
+ standby 65 preempt
+
+interface Vlan66
+ standby version 2
+ standby 66 ip 148.60.66.254
+ standby 66 priority 110
+ standby 66 preempt
+
+interface Vlan67
+ standby version 2
+ standby 67 ip 148.60.67.254
+ standby 67 priority 90
+ standby 67 preempt
+
+interface Vlan68
+ standby version 2
+ standby 68 ip 148.60.68.254
+ standby 68 priority 90
+ standby 68 preempt
+
+interface Vlan69
+ standby version 2
+ standby 69 ip 148.60.69.254
+ standby 69 priority 110
+ standby 69 preempt
+
+ip route 0.0.0.0 0.0.0.0 148.60.70.2 

@@ -1,0 +1,34 @@
+enable 
+configure terminal
+hostname Yum_Kaax
+
+interface g0/0
+ ip address 148.60.70.4 255.255.255.248
+ no shutdown
+
+interface g0/1
+ ip address 148.60.70.10 255.255.255.252
+ no shutdown
+
+
+ip domain-name juanmark.com
+crypto key generate rsa 
+1024
+username admin secret ccna
+line vty 0 15
+transport input ssh
+login local
+exit
+ip ssh version 2
+
+router rip
+ version 2
+ network 148.60.0.0
+ no auto-summary
+
+ip classless
+ip route 148.60.65.0 255.255.255.0 148.60.70.6 
+ip route 148.60.66.0 255.255.255.0 148.60.70.6 
+ip route 148.60.67.0 255.255.255.0 148.60.70.6 
+ip route 148.60.68.0 255.255.255.0 148.60.70.6 
+ip route 148.60.69.0 255.255.255.0 148.60.70.6 

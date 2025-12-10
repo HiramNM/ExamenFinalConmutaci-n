@@ -1,0 +1,107 @@
+enable 
+configure terminal
+hostname MS4
+
+vtp mode client
+vtp domain juanmark.com
+
+ip routing
+
+int g1/0/6
+ switchport mode trunk
+ switchport trunk native vlan 69
+ switchport trunk allowed vlan 65,66,67,68,69
+
+int range g1/0/10-11
+ channel-group 5 mode active
+ ex
+
+interface port-channel 5
+ switchport mode trunk
+ switchport trunk native vlan 69
+ switchport trunk allowed vlan 65,66,67,68,69
+
+int range g1/0/16-17
+ channel-group 7 mode active
+ ex
+
+interface port-channel 7
+ switchport mode trunk
+ switchport trunk native vlan 69
+ switchport trunk allowed vlan 65,66,67,68,69
+
+int range g1/0/2-3
+ channel-group 4 mode active
+ ex
+
+interface port-channel 4
+ switchport mode trunk
+ switchport trunk native vlan 69
+ switchport trunk allowed vlan 65,66,67,68,69
+
+spanning-tree vlan 65-66,69 root secondary
+spanning-tree vlan 67-68 root primary
+
+ip domain-name juanmark.com
+crypto key generate rsa 
+1024
+username admin secret ccna
+line vty 0 15
+transport input ssh
+login local
+exit
+ip ssh version 2
+
+interface Vlan65
+ ip address 148.60.65.2 255.255.255.0
+
+interface Vlan66
+ ip address 148.60.66.2 255.255.255.0
+
+interface Vlan67
+ ip address 148.60.67.2 255.255.255.0
+
+interface Vlan68
+ ip address 148.60.68.2 255.255.255.0
+
+interface Vlan69
+ ip address 148.60.69.2 255.255.255.0
+
+interface vlan 70
+ ip address 148.60.70.3 255.255.255.0
+
+int g1/0/1
+sw mo access
+sw acc vlan 70
+
+ interface Vlan65
+ standby version 2
+ standby 65 ip 148.60.65.254
+ standby 65 priority 90
+ standby 65 preempt
+
+interface Vlan66
+ standby version 2
+ standby 66 ip 148.60.66.254
+ standby 66 priority 90
+ standby 66 preempt
+
+interface Vlan67
+ standby version 2
+ standby 67 ip 148.60.67.254
+ standby 67 priority 110
+ standby 67 preempt
+
+interface Vlan68
+ standby version 2
+ standby 68 ip 148.60.68.254
+ standby 68 priority 110
+ standby 68 preempt
+
+interface Vlan69
+ standby version 2
+ standby 69 ip 148.60.69.254
+ standby 69 priority 90
+ standby 69 preempt
+
+ ip route 0.0.0.0 0.0.0.0 148.60.70.5
