@@ -160,7 +160,7 @@ int g1/0/24
  switchport trunk allowed vlan 65,66,67,68,69
 
 int range g1/0/2-3
- channel-group 1 mode active
+ channel-group 1 mode desirable
  ex
 
 interface port-channel 1
@@ -169,7 +169,7 @@ interface port-channel 1
  switchport trunk allowed vlan 65,66,67,68,69
 
 int range g1/0/16-17
- channel-group 6 mode active
+ channel-group 6 mode desirable
  ex
 
 interface port-channel 6
@@ -178,7 +178,7 @@ interface port-channel 6
  switchport trunk allowed vlan 65,66,67,68,69
 
 int range g1/0/10-11
- channel-group 5 mode active
+ channel-group 5 mode desirable
  ex
 
 interface port-channel 5
@@ -242,7 +242,7 @@ ip add 148.60.70.3 255.255.255.248
 no sh
 
 int range g1/0/2-3
- channel-group 1 mode active
+ channel-group 1 mode auto
  ex
 
 interface port-channel 1
@@ -251,7 +251,7 @@ interface port-channel 1
  switchport trunk allowed vlan 65,66,67,68,69
 
 int range g1/0/4-5
- channel-group 2 mode active
+ channel-group 2 mode auto
  ex
 
 interface port-channel 2
@@ -260,7 +260,7 @@ interface port-channel 2
  switchport trunk allowed vlan 65,66,67,68,69
 
 int range g1/0/16-17
- channel-group 7 mode active
+ channel-group 7 mode auto
  ex
 
 interface port-channel 7
@@ -293,7 +293,7 @@ vtp mode client
 vtp domain juanmark.com
 
 int range g1/0/4-5
- channel-group 2 mode active
+ channel-group 2 mode auto
  ex
 
 interface port-channel 2
@@ -451,7 +451,7 @@ int g1/0/6
  switchport trunk allowed vlan 65,66,67,68,69
 
 int range g1/0/10-11
- channel-group 5 mode active
+ channel-group 5 mode desirable
  ex
 
 interface port-channel 5
@@ -460,7 +460,7 @@ interface port-channel 5
  switchport trunk allowed vlan 65,66,67,68,69
 
 int range g1/0/16-17
- channel-group 7 mode active
+ channel-group 7 mode desirable
  ex
 
 interface port-channel 7
@@ -469,7 +469,7 @@ interface port-channel 7
  switchport trunk allowed vlan 65,66,67,68,69
 
 int range g1/0/2-3
- channel-group 4 mode active
+ channel-group 4 mode desirable
  ex
 
 interface port-channel 4
@@ -550,7 +550,7 @@ vtp mode client
 vtp domain juanmark.com
 
 int range g1/0/2-3
- channel-group 4 mode active
+ channel-group 4 mode auto
  ex
 
 interface port-channel 4
@@ -559,7 +559,7 @@ interface port-channel 4
  switchport trunk allowed vlan 65,66,67,68,69
 
 int range g1/0/4-5
- channel-group 3 mode active
+ channel-group 3 mode auto
  ex
 
 interface port-channel 3
@@ -568,17 +568,13 @@ interface port-channel 3
  switchport trunk allowed vlan 65,66,67,68,69
 
 int range g1/0/16-17
- channel-group 6 mode active
+ channel-group 6 mode auto
  ex
 
 interface port-channel 6
  switchport mode trunk
  switchport trunk native vlan 69
  switchport trunk allowed vlan 65,66,67,68,69
-
-int range g1/0/4-5
- channel-group 2 mode active
- ex
 
 int g1/0/1
  switchport mode trunk
@@ -612,7 +608,7 @@ vtp domain juanmark.com
 
 
 int range g1/0/4-5
- channel-group 3 mode active
+ channel-group 3 mode auto
  ex
 
 interface port-channel 3

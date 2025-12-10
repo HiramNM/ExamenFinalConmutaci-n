@@ -4,7 +4,7 @@ vtp domain juanmark.com
 
 
 int range g1/0/4-5
- channel-group 3 mode active
+ channel-group 3 mode auto
  ex
 
 interface port-channel 3
