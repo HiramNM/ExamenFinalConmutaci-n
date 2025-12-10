@@ -5,9 +5,6 @@ hostname Itzamna
 
 interface g0/0
  ip address 148.60.70.2 255.255.255.248
- standby 1 ip 148.60.70.5
- standby 1 priority 110
- standby 1 preempt
  no shutdown
 
 interface g0/1
@@ -24,7 +21,16 @@ login local
 exit
 ip ssh version 2
 
-ip route 148.60.64.0 255.255.248.0 148.60.70.1
+router rip
+ version 2
+ network 148.60.0.0
+ no auto-summary
+
+ip route 148.60.65.0 255.255.255.0 148.60.70.1 
+ip route 148.60.66.0 255.255.255.0 148.60.70.1 
+ip route 148.60.67.0 255.255.255.0 148.60.70.1 
+ip route 148.60.68.0 255.255.255.0 148.60.70.1 
+ip route 148.60.69.0 255.255.255.0 148.60.70.1 
 
 Router Yum Kaax**********************************************************
 enable 
@@ -33,9 +39,6 @@ hostname Yum_Kaax
 
 interface g0/0
  ip address 148.60.70.4 255.255.255.248
- standby 1 ip 148.60.70.5
- standby 1 priority 100
- standby 1 preempt
  no shutdown
 
 interface g0/1
@@ -53,7 +56,17 @@ login local
 exit
 ip ssh version 2
 
-ip route 148.60.64.0 255.255.248.0 148.60.70.1
+router rip
+ version 2
+ network 148.60.0.0
+ no auto-summary
+
+ip classless
+ip route 148.60.65.0 255.255.255.0 148.60.70.6 
+ip route 148.60.66.0 255.255.255.0 148.60.70.6 
+ip route 148.60.67.0 255.255.255.0 148.60.70.6 
+ip route 148.60.68.0 255.255.255.0 148.60.70.6 
+ip route 148.60.69.0 255.255.255.0 148.60.70.6 
 
 Router MS1***************************************************************
 enable 
@@ -62,6 +75,8 @@ hostname MS1
 
 vtp mode server
 vtp domain juanmark.com
+
+ip routing
 
 vlan 65
  name VENTAS
@@ -101,6 +116,8 @@ ip dhcp excluded-address 148.60.67.1 148.60.67.5
 ip dhcp excluded-address 148.60.68.1 148.60.68.5
 ip dhcp excluded-address 148.60.68.1 148.60.68.5
 ip dhcp excluded-address 148.60.69.1 148.60.69.10
+ip dhcp excluded-address 148.60.69.253
+
 
 ip routing
 interface vlan 65
@@ -118,10 +135,12 @@ interface vlan 68
  interface vlan 69
  ip address 148.60.69.1 255.255.255.0
 
+interface vlan 70
+ ip address 148.60.70.1 255.255.255.0
+
 int g1/0/1
-no sw
- ip address 148.60.70.1 255.255.255.248
- no shutdown
+sw mo access
+sw acc vlan 70
  
 int g1/0/6
  switchport mode trunk
@@ -160,7 +179,8 @@ interface port-channel 5
  switchport trunk native vlan 69
  switchport trunk allowed vlan 65,66,67,68,69
 
-spanning-tree vlan 65-68,69 root primary
+spanning-tree vlan 65-66,69 root primary
+spanning-tree vlan 67-68 root secondary
 
 ip domain-name juanmark.com
 crypto key generate rsa 
@@ -172,7 +192,37 @@ login local
 exit
 ip ssh version 2
 
-ip route 0.0.0.0 0.0.0.0 148.60.70.5
+interface Vlan65
+ standby version 2
+ standby 65 ip 148.60.65.254
+ standby 65 priority 110
+ standby 65 preempt
+
+interface Vlan66
+ standby version 2
+ standby 66 ip 148.60.66.254
+ standby 66 priority 110
+ standby 66 preempt
+
+interface Vlan67
+ standby version 2
+ standby 67 ip 148.60.67.254
+ standby 67 priority 90
+ standby 67 preempt
+
+interface Vlan68
+ standby version 2
+ standby 68 ip 148.60.68.254
+ standby 68 priority 90
+ standby 68 preempt
+
+interface Vlan69
+ standby version 2
+ standby 69 ip 148.60.69.254
+ standby 69 priority 110
+ standby 69 preempt
+
+ip route 0.0.0.0 0.0.0.0 148.60.70.2 
 
 MS2***************************************************************
 
@@ -216,9 +266,6 @@ int range g1/0/7-8
  switchport trunk native vlan 69
  switchport trunk allowed vlan 65,66,67,68,69
 
-spanning-tree vlan 65-68,69 root secondary
-
-
 ip domain-name juanmark.com
 crypto key generate rsa 
 1024
@@ -229,6 +276,9 @@ login local
 exit
 ip ssh version 2
 
+int vlan 69
+IP ADD 148.60.69.4 255.255.255.0
+NO SH
 
 MS3***************************************************************
 
@@ -260,6 +310,9 @@ login local
 exit
 ip ssh version 2
 
+int vlan 69
+IP ADD 148.60.69.3 255.255.255.0
+NO SH
 
 SW AS 1 ********************************************************
 
@@ -317,7 +370,9 @@ switchport port-security
 switchport port-security maximum 1
 switchport port-security violation shutdown
 
-ip route 0.0.0.0 0.0.0.0 148.60.70.5
+int vlan 69
+IP ADD 148.60.69.5 255.255.255.0
+NO SH
 
 SW AS 2 ********************************************************
 
@@ -353,7 +408,6 @@ int range g0/1-2
  switchport trunk native vlan 69
  switchport trunk allowed vlan 65,66,67,68,69
 
-
 ip domain-name juanmark.com
 crypto key generate rsa 
 1024
@@ -370,6 +424,10 @@ switchport port-security
 switchport port-security maximum 1
 switchport port-security violation shutdown
 
+int vlan 69
+IP ADD 148.60.69.6 255.255.255.0
+NO SH
+
 MS4***************************************************************
 enable 
 configure terminal
@@ -378,11 +436,7 @@ hostname MS4
 vtp mode client
 vtp domain juanmark.com
 
-int g1/0/1
-no sw
- ip address 148.60.69.3 255.255.255.248
- no shutdown
- 
+ip routing
 
 int g1/0/6
  switchport mode trunk
@@ -416,6 +470,8 @@ interface port-channel 4
  switchport trunk native vlan 69
  switchport trunk allowed vlan 65,66,67,68,69
 
+spanning-tree vlan 65-66,69 root secondary
+spanning-tree vlan 67-68 root primary
 
 ip domain-name juanmark.com
 crypto key generate rsa 
@@ -427,6 +483,59 @@ login local
 exit
 ip ssh version 2
 
+interface Vlan65
+ ip address 148.60.65.2 255.255.255.0
+
+interface Vlan66
+ ip address 148.60.66.2 255.255.255.0
+
+interface Vlan67
+ ip address 148.60.67.2 255.255.255.0
+
+interface Vlan68
+ ip address 148.60.68.2 255.255.255.0
+
+interface Vlan69
+ ip address 148.60.69.2 255.255.255.0
+
+interface vlan 70
+ ip address 148.60.70.3 255.255.255.0
+
+int g1/0/1
+sw mo access
+sw acc vlan 70
+
+ interface Vlan65
+ standby version 2
+ standby 65 ip 148.60.65.254
+ standby 65 priority 90
+ standby 65 preempt
+
+interface Vlan66
+ standby version 2
+ standby 66 ip 148.60.66.254
+ standby 66 priority 90
+ standby 66 preempt
+
+interface Vlan67
+ standby version 2
+ standby 67 ip 148.60.67.254
+ standby 67 priority 110
+ standby 67 preempt
+
+interface Vlan68
+ standby version 2
+ standby 68 ip 148.60.68.254
+ standby 68 priority 110
+ standby 68 preempt
+
+interface Vlan69
+ standby version 2
+ standby 69 ip 148.60.69.254
+ standby 69 priority 90
+ standby 69 preempt
+
+ ip route 0.0.0.0 0.0.0.0 148.60.70.5
 
 MS5***************************************************************
 
@@ -485,6 +594,9 @@ login local
 exit
 ip ssh version 2
 
+int vlan 69
+IP ADD 148.60.69.8 255.255.255.0
+NO SH
 
 MS6***************************************************************
 
@@ -527,6 +639,9 @@ login local
 exit
 ip ssh version 2
 
+int vlan 69
+IP ADD 148.60.69.9 255.255.255.0
+NO SH
 
 SW AS 3 ********************************************************
 
@@ -578,6 +693,10 @@ sw mo acc
 switchport port-security
 switchport port-security maximum 1
 switchport port-security violation shutdown
+
+int vlan 69
+IP ADD 148.60.69.10 255.255.255.0
+NO SH
 
 SW AS 4 ********************************************************
 
@@ -634,3 +753,7 @@ sw mo acc
 switchport port-security
 switchport port-security maximum 1
 switchport port-security violation shutdown
+
+int vlan 69
+IP ADD 148.60.69.7 255.255.255.0
+NO SH
