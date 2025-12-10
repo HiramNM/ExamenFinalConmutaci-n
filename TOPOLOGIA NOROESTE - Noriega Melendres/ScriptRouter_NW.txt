@@ -1,0 +1,92 @@
+Router
+
+enable
+conf t
+
+hostname Router
+
+enable secret cisco123
+
+ip domain-name cisco.com
+ip ssh version 2
+
+username ADMIN privilege 15 password cisco111
+
+ip dhcp excluded-address 148.60.5.1 148.60.5.10
+ip dhcp excluded-address 148.60.6.1 148.60.6.10
+ip dhcp excluded-address 148.60.7.1 148.60.7.10
+ip dhcp excluded-address 148.60.9.1 148.60.9.10
+
+ip dhcp pool GTI
+ network 148.60.9.0 255.255.255.0
+ default-router 148.60.9.1
+
+ip dhcp pool MKT
+ network 148.60.5.0 255.255.255.0
+ default-router 148.60.5.1
+
+ip dhcp pool VENTAS
+ network 148.60.6.0 255.255.255.0
+ default-router 148.60.6.1
+
+ip dhcp pool COMPRAS
+ network 148.60.7.0 255.255.255.0
+ default-router 148.60.7.1
+
+ipv6 unicast-routing
+
+ipv6 dhcp pool IPV6
+ dns-server 2001:4860:4860::8888
+ domain-name juanmark.com
+
+interface g0/0
+ no shutdown
+
+interface g0/0.5
+ encapsulation dot1Q 5
+ ip address 148.60.5.1 255.255.255.0
+ ipv6 address 2006:AFEA:B0CA:5::1/64
+ ipv6 nd other-config-flag
+ ipv6 dhcp server IPV6
+
+interface g0/0.6
+ encapsulation dot1Q 6
+ ip address 148.60.6.1 255.255.255.0
+ ipv6 address 2006:AFEA:B0CA:6::1/64
+ ipv6 nd other-config-flag
+ ipv6 dhcp server IPV6
+
+interface g0/0.7
+ encapsulation dot1Q 7
+ ip address 148.60.7.1 255.255.255.0
+ ipv6 address 2006:AFEA:B0CA:7::1/64
+ ipv6 nd other-config-flag
+ ipv6 dhcp server IPV6
+
+interface g0/0.9
+ encapsulation dot1Q 9
+ ip address 148.60.9.1 255.255.255.0
+ ipv6 address 2006:AFEA:B0CA:9::1/64
+ ipv6 nd other-config-flag
+ ipv6 dhcp server IPV6
+
+int se0/3/0
+ ip add 148.60.210.18 255.255.255.252
+
+interface s0/3/1
+ ip add 148.60.200.13 255.255.255.252
+ clock rate 64000
+
+no sh
+
+router rip
+ version 2
+ network 148.60.0.0
+ no auto-summary
+
+line vty 0 4
+ login local
+ transport input ssh
+
+end
+wr

@@ -1,0 +1,84 @@
+Switch 10
+
+enable
+conf t
+
+hostname Switch
+
+enable secret cisco123
+
+ip domain-name cisco.com
+ip ssh version 2
+
+username ADMIN privilege 15 password cisco111
+
+spanning-tree mode pvst
+spanning-tree extend system-id
+
+vlan 5
+ name MKT
+vlan 6
+ name VENTAS
+vlan 7
+ name COMPRAS
+vlan 9
+ name GTI
+
+interface range fa0/1 - 5
+ switchport mode access
+ switchport access vlan 9
+ switchport port-security
+ switchport port-security mac-address sticky
+
+interface fa0/6
+ switchport mode access
+ switchport access vlan 5
+ switchport port-security
+ switchport port-security mac-address sticky
+ switchport port-security mac-address sticky 0030.F201.9C3B
+
+interface range fa0/7 - 10
+ switchport mode access
+ switchport access vlan 5
+ switchport port-security
+ switchport port-security mac-address sticky
+
+interface fa0/11
+ switchport mode access
+ switchport access vlan 6
+ switchport port-security
+ switchport port-security mac-address sticky
+ switchport port-security mac-address sticky 0030.A3AB.B0A9
+
+interface range fa0/12 - 15
+ switchport mode access
+ switchport access vlan 6
+ switchport port-security
+ switchport port-security mac-address sticky
+
+interface fa0/16
+ switchport mode access
+ switchport access vlan 7
+ switchport port-security
+ switchport port-security mac-address sticky
+ switchport port-security mac-address sticky 00E0.F78E.CB40
+
+interface range fa0/17 - 20
+ switchport mode access
+ switchport access vlan 7
+ switchport port-security
+ switchport port-security mac-address sticky
+
+interface range gi0/1 - 2
+ switchport mode trunk
+ switchport trunk allowed vlan 5-7,9
+
+interface vlan 1
+ shutdown
+
+line vty 0 4
+ login local
+ transport input ssh
+
+end
+wr
