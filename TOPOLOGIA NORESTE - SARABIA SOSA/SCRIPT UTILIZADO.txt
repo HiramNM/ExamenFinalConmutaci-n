@@ -18,22 +18,24 @@ line vty 0 4
  -------- INTERFACES --------
 
 int g0/0
- ip address 20.0.0.1 255.0.0.0
+ ip address 148.60.200.1 255.255.255.252
  no sh
 
+int g0/1
+ ip address 148.60.97.8 255.255.255.0
+ no shutdown
+
 int s0/2/1
- ip address 12.0.0.2 255.0.0.0
- clock rate 64000
+ ip address 148.60.210.6 255.255.255.252
  no sh
 
 
  -------- RIP --------
 router rip
  version 2
- network 12.0.0.0
- network 20.0.0.0
  network 148.60.0.0
  no auto-summary
+
 
 /////////////ROUTER Lavaca/////////////////
 en
@@ -54,8 +56,13 @@ line vty 0 4
  -------- INTERFACES --------
 
 int g0/0
- ip address 21.0.0.1 255.0.0.0
+ ip address 148.60.200.5 255.255.255.252
  no sh
+
+int g0/2
+ ip address 148.60.200.2 255.255.255.252
+ no sh
+
 
 int g0/1.97
  encapsulation dot1Q 97 native
@@ -86,23 +93,20 @@ int g0/1.100
  no sh
 
 int g0/2
- ip address 20.0.0.2 255.0.0.0
+ ip address 148.60.200.2 255.255.255.252
  no sh
 
 int s0/3/0
- ip address 13.0.0.2 255.0.0.0
- clock rate 64000
+ ip address 148.60.210.14 255.255.255.252
  no sh
 
 
  -------- RIP --------
 router rip
  version 2
- network 13.0.0.0
- network 20.0.0.0
- network 21.0.0.0
  network 148.60.0.0
  no auto-summary
+
 
 ///////////////ROUTER LaSilla//////////////////////////
 en
@@ -155,11 +159,11 @@ int g0/0.100
  no sh
 
 int g0/1
- ip address 21.0.0.2 255.0.0.0
+ ip address 148.60.200.6 255.255.255.252
  no sh
 
 int g0/2
- ip address 11.0.0.1 255.0.0.0
+ ip address 148.60.210.9 255.255.255.252
  no sh
 
 
@@ -167,9 +171,9 @@ int g0/2
 router rip
  version 2
  network 11.0.0.0
- network 21.0.0.0
  network 148.60.0.0
  no auto-summary
+
 
 SWITCHES
 ///////////SW1//////////////
@@ -200,6 +204,7 @@ vlan 100
  name NE_SERVICIOS
 
 
+
 ! -------- PORT-SECURITY POR RANGO --------
 int range f0/4-24
  switchport mode access
@@ -209,10 +214,15 @@ int range f0/4-24
  switchport port-security violation shutdown
 
 
-! -------- STP --------
-spanning-tree vlan 99,100 root primary
-spanning-tree vlan 97,98 root secondary
 
+! -------- STP --------
+enable
+configure terminal
+spanning-tree mode pvst
+spanning-tree vlan 97,98 root primary
+spanning-tree vlan 99,100 root secondary
+
+end
 
 ! -------- TRUNK PORTS ------
 int f0/1
@@ -325,6 +335,14 @@ int range f0/4-24
  switchport port-security violation shutdown
 
 
+! -------- STP --------
+enable
+configure terminal
+spanning-tree mode pvst
+spanning-tree vlan 99,100 root primary
+spanning-tree vlan 97,98 root secondary
+
+end
 
 ! -------- TRUNK PORTS --------
 int f0/1
@@ -407,10 +425,6 @@ int range f0/4-24
  switchport port-security violation shutdown
 
 
-
-! -------- STP --------
-spanning-tree vlan 97,98,99 root primary
-spanning-tree vlan 100 root secondary
 
 
 
@@ -500,12 +514,6 @@ int range f0/18-24
  switchport port-security maximum 1
  switchport port-security violation shutdown
 
-
-
-
-! -------- STP --------
-spanning-tree vlan 98,99,100 root primary
-spanning-tree vlan 97 root secondary
 
 
 
