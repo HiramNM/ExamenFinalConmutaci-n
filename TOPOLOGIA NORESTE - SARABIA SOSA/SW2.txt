@@ -1,0 +1,118 @@
+
+///////////SW2////////////////////
+
+en
+conf t
+
+hostname SW2
+ip domain-name JuanMark.com
+ip ssh version 2
+crypto key generate rsa
+
+username admin privilege 15 secret cisco
+
+line vty 0 4
+ transport input ssh
+ login local
+
+
+! -------- DHCP EXCLUDED --------
+ip dhcp excluded-address 148.60.97.1 148.60.97.10
+ip dhcp excluded-address 148.60.98.1 148.60.98.10
+ip dhcp excluded-address 148.60.99.1 148.60.99.10
+ip dhcp excluded-address 148.60.100.1 148.60.100.10
+
+
+! -------- DHCP POOLS --------
+ip dhcp pool NE_TI
+ network 148.60.97.0 255.255.255.0
+ default-router 148.60.97.1
+
+ip dhcp pool NE_VENTAS
+ network 148.60.98.0 255.255.255.0
+ default-router 148.60.98.1
+
+ip dhcp pool NE_COMPRAS
+ network 148.60.99.0 255.255.255.0
+ default-router 148.60.99.1
+
+ip dhcp pool NE_SERVICIOS
+ network 148.60.100.0 255.255.255.0
+ default-router 148.60.100.1
+
+
+
+! -------- VLANS --------
+vlan 97
+ name NE_TI
+vlan 98
+ name NE_VENTAS
+vlan 99
+ name NE_COMPRAS
+vlan 100
+ name NE_SERVICIOS
+
+
+
+! -------- PORT-SECURITY --------
+int range f0/4-24
+ switchport mode access
+ switchport port-security
+ switchport port-security mac-address sticky
+ switchport port-security maximum 1
+ switchport port-security violation shutdown
+
+
+! -------- STP --------
+enable
+configure terminal
+spanning-tree mode pvst
+spanning-tree vlan 99,100 root primary
+spanning-tree vlan 97,98 root secondary
+
+end
+
+! -------- TRUNK PORTS --------
+int f0/1
+ switchport trunk native vlan 97
+ switchport trunk allowed vlan 97-100
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+
+int f0/2
+ switchport trunk native vlan 97
+ switchport trunk allowed vlan 97-100
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+
+int f0/3
+ switchport trunk native vlan 97
+ switchport trunk allowed vlan 97-100
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+
+
+
+! -------- ASIGNACIÓN DE VLAN POR RANGOS --------
+int range f0/13-15
+ switchport access vlan 97
+exit
+
+int range f0/16-18
+ switchport access vlan 98
+exit
+
+int range f0/19-21
+ switchport access vlan 99
+exit
+
+int range f0/22-24
+ switchport access vlan 100
+exit
+
+
+
+! -------- DEFAULT GATEWAY --------
+ip default-gateway 148.60.97.1
+
+

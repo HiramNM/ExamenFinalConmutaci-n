@@ -1,0 +1,38 @@
+
+////////////////ROUTER ElCabrito////////////////
+en
+conf t
+
+hostname ElCabrito
+ip domain-name JuanMark.com
+ip ssh version 2
+crypto key generate rsa
+
+username admin privilege 15 secret cisco
+line vty 0 4
+ transport input ssh
+ login local
+
+
+
+ -------- INTERFACES --------
+
+int g0/0
+ ip address 148.60.200.1 255.255.255.252
+ no sh
+
+int g0/1
+ ip address 148.60.97.8 255.255.255.0
+ no shutdown
+
+int s0/2/1
+ ip address 148.60.210.6 255.255.255.252
+ no sh
+
+
+ -------- RIP --------
+router rip
+ version 2
+ network 148.60.0.0
+ no auto-summary
+

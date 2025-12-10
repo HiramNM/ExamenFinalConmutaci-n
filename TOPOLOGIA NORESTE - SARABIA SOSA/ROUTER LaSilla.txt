@@ -1,0 +1,66 @@
+///////////////ROUTER LaSilla//////////////////////////
+en
+conf t
+
+hostname LaSilla
+ip domain-name JuanMark.com
+ip ssh version 2
+crypto key generate rsa
+
+username admin privilege 15 secret cisco
+
+line vty 0 4
+ transport input ssh
+ login local
+
+
+-------- INTERFACES --------
+
+int g0/0.97
+ encapsulation dot1Q 97 native
+ ip address 148.60.97.2 255.255.255.0
+ standby 97 ip 148.60.97.1
+ standby 97 priority 110
+ standby 97 preempt
+ no sh
+
+int g0/0.98
+ encapsulation dot1Q 98
+ ip address 148.60.98.2 255.255.255.0
+ standby 98 ip 148.60.98.1
+ standby 98 priority 110
+ standby 98 preempt
+ no sh
+
+int g0/0.99
+ encapsulation dot1Q 99
+ ip address 148.60.99.2 255.255.255.0
+ standby 99 ip 148.60.99.1
+ standby 99 priority 110
+ standby 99 preempt
+ no sh
+
+int g0/0.100
+ encapsulation dot1Q 100
+ ip address 148.60.100.2 255.255.255.0
+ standby 100 ip 148.60.100.1
+ standby 100 priority 110
+ standby 100 preempt
+ no sh
+
+int g0/1
+ ip address 148.60.200.6 255.255.255.252
+ no sh
+
+int g0/2
+ ip address 148.60.210.9 255.255.255.252
+ no sh
+
+
+-------- RIP --------
+router rip
+ version 2
+ network 11.0.0.0
+ network 148.60.0.0
+ no auto-summary
+

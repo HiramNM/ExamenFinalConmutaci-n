@@ -1,0 +1,88 @@
+////////SW4///////////////////
+
+en
+conf t
+
+hostname SW4
+ip domain-name JuanMark.com
+ip ssh version 2
+crypto key generate rsa
+
+username admin privilege 15 secret cisco
+
+line vty 0 4
+ transport input ssh
+ login local
+
+
+! -------- VLANS --------
+vlan 97
+ name NE_TI
+vlan 98
+ name NE_VENTAS
+vlan 99
+ name NE_COMPRAS
+vlan 100
+ name NE_SERVICIOS
+
+
+! -------- PORT-SECURITY POR RANGO --------
+int range f0/4-16
+ sw mode access
+ switchport port-security
+ switchport port-security mac-address sticky
+ switchport port-security maximum 1
+ switchport port-security violation shutdown
+int range f0/18-24
+ sw mode access
+ switchport port-security
+ switchport port-security mac-address sticky
+ switchport port-security maximum 1
+ switchport port-security violation shutdown
+
+
+
+
+! -------- TRUNK PORTS --------
+int f0/1
+ switchport trunk native vlan 97
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+
+int f0/2
+ switchport trunk native vlan 97
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+
+int f0/3
+ switchport trunk native vlan 97
+ switchport trunk allowed vlan 97-100
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ shutdown
+
+
+
+! -------- ASIGNACIÓN DE VLAN POR RANGOS --------
+int range f0/13-15
+ switchport access vlan 97
+exit
+
+int range f0/16-18
+ switchport access vlan 98
+exit
+
+int range f0/19-21
+ switchport access vlan 99
+exit
+
+int range f0/22-24
+ switchport access vlan 100
+exit
+
+
+
+
+! -------- DEFAULT GATEWAY --------
+ip default-gateway 148.60.97.1
+
