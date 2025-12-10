@@ -1,0 +1,82 @@
+// Router-Centro
+ena
+conf t
+
+hostname Centro
+
+ip dhcp excluded-address 148.60.33.1 148.60.33.10
+ip dhcp excluded-address 148.60.34.1 148.60.34.10
+ip dhcp excluded-address 148.60.35.1 148.60.35.10
+ip dhcp excluded-address 148.60.36.1 148.60.36.10
+ip dhcp excluded-address 148.60.37.1 148.60.37.10
+
+ip dhcp pool POOL_GestionTI
+network 148.60.33.0 255.255.255.0
+default-router 148.60.33.1
+
+ip dhcp pool POOL_GestionWLAN
+network 148.60.34.0 255.255.255.0
+default-router 148.60.34.1
+
+ip dhcp pool POOL_VentasWLAN
+network 148.60.35.0 255.255.255.0
+default-router 148.60.35.1
+
+ip dhcp pool POOL_Compras
+network 148.60.36.0 255.255.255.0
+default-router 148.60.36.1
+
+ip dhcp pool POOL_Practicantes
+network 148.60.37.0 255.255.255.0
+default-router 148.60.37.1
+
+int g0/0
+no ip address
+
+int g0/0.33
+enc dot1q 33
+ip address 148.60.33.1 255.255.255.0
+
+int g0/0.34
+enc dot1q 34 native
+ip address 148.60.34.1 255.255.255.0
+
+int g0/0.35
+enc dot1q 35
+ip address 148.60.35.1 255.255.255.0
+
+int g0/0.36
+enc dot1q 36
+ip address 148.60.36.1 255.255.255.0
+
+int g0/0.37
+enc dot1q 37
+ip address 148.60.37.1 255.255.255.0
+
+int s0/2/0
+ip add 148.60.210.1 255.255.255.252
+clock rate 64000
+no shut
+
+int s0/2/1
+ip add 148.60.210.17 255.255.255.252
+clock rate 64000
+no shut
+
+int s0/3/0
+ip add 148.60.210.5 255.255.255.252
+clock rate 64000
+no shut
+
+router rip
+version 2
+network 148.60.0.0
+
+ip domain-name JuanMark.com
+crypto key generate rsa
+
+ip ssh version 2
+line vty 0 4
+transport input ssh
+login local
+username ADMIN privilege 15 pass 123

@@ -1,0 +1,84 @@
+// Switch de Distribucion del edificio Anexo (SD-Anexo)
+ena
+conf t
+
+hostname SD-Anexo
+
+vtp mode client
+vtp domain JuanMark.com
+vtp password 123
+vtp version 2
+
+spanning-tree mode pvst
+spanning-tree vlan 33-37 root secondary
+
+int range gig1/0/1-4
+sw access vlan 33
+sw mode access
+sw port-security
+sw port-security mac-address sticky
+sw port-security maximum 1
+sw port-security violation shutdown
+
+int range gig1/0/5-8
+sw access vlan 34
+sw mode access
+sw port-security
+sw port-security mac-address sticky
+sw port-security maximum 1
+sw port-security violation shutdown
+
+int range gig1/0/9-12
+sw access vlan 35
+sw mode access
+sw port-security
+sw port-security mac-address sticky
+sw port-security maximum 1
+sw port-security violation shutdown
+
+int range gig1/0/13-16
+sw access vlan 36
+sw mode access
+sw port-security
+sw port-security mac-address sticky
+sw port-security maximum 1
+sw port-security violation shutdown
+
+int range gig1/0/17-20
+sw access vlan 37
+sw mode access
+sw port-security
+sw port-security mac-address sticky
+sw port-security maximum 1
+sw port-security violation shutdown
+
+int range gig1/0/20-24
+sw mode trunk
+sw trunk allowed vlan 33-37
+sw trunk native vlan 34
+sw nonegotiate
+
+int range gig1/0/23-24
+channel-group 1 
+channel-group 1 mode desirable
+
+int Port-channel1
+switchport trunk native vlan 34
+switchport trunk allowed vlan 33-37
+switchport mode trunk
+switchport nonegotiate
+speed 1000
+
+ip domain-name JuanMark.com
+crypto key generate rsa
+
+ip ssh version 2
+line vty 0 4
+transport input ssh
+login local
+username ADMIN privilege 15 pass 123
+
+
+int vlan 34
+ip add 148.60.34.7 255.255.255.0
+ip default-gateway 148.60.34.1
