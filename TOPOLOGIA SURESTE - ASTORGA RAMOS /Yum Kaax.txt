@@ -3,9 +3,9 @@ configure terminal
 hostname Yum_Kaax
 
 interface g0/0
- ip address 148.60.70.4 255.255.255.248
+ ip address 148.60.70.5 255.255.255.252
  no shutdown
-
+ 
 interface g0/1
  ip address 148.60.70.10 255.255.255.252
  no shutdown
